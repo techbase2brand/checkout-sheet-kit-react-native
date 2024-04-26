@@ -54,6 +54,9 @@ function CatalogScreen({navigation}: Props) {
 
   const [fetchProducts, {loading, data, error}] = queries.products;
 
+  console.log("working",queries.products[1]?.data);
+  console.log("Checkout URL:", checkoutURL);
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);

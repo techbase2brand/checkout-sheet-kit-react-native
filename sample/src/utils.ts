@@ -1,5 +1,5 @@
 import env from 'react-native-config';
-import {NativeModules, Platform} from 'react-native';
+import {NativeModules, Platform,Dimensions, PixelRatio} from 'react-native';
 import {AppConfig} from './context/Config';
 
 const {
@@ -72,3 +72,16 @@ export function currency(amount?: string, currency?: string): string {
     return `${Number(amount ?? 0).toFixed(2)}` + currencyCode;
   }
 }
+
+
+export const widthPercentageToDP = widthPercent => {
+  const screenWidth = Dimensions.get('window').width;
+  const elemWidth = parseFloat(widthPercent);
+  return PixelRatio.roundToNearestPixel((screenWidth * elemWidth) / 100);
+};
+
+export const heightPercentageToDP = heightPercent => {
+  const screenHeight = Dimensions.get('window').height;
+  const elemHeight = parseFloat(heightPercent);
+  return PixelRatio.roundToNearestPixel((screenHeight * elemHeight) / 100);
+};

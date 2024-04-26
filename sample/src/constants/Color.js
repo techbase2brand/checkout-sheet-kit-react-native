@@ -1,0 +1,9 @@
+export const darkgrayColor ="#252837";
+export const whiteColor ="#fff";
+export const blackColor ="#252837";
+export const grayColor="#646E77";
+export const redColor="#ed1d0e";
+export const goldColor="#FC9803";
+export const lightGrayColor="#D1D4D6";
+export const lightBlueColor ="#3573AA"
+export const lightGreenColor ="#00C170"
