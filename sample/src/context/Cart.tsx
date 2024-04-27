@@ -136,8 +136,8 @@ export const CartProvider: React.FC<PropsWithChildren> = ({children}) => {
 
       dispatch({type: 'remove', variantId});
 
-      // setCheckoutURL(data.cartLinesAdd.cart.checkoutUrl);
-      setCheckoutURL("https://sahjad-ext.myshopify.com/checkouts/cn/Z2NwLXVzLWNlbnRyYWwxOjAxSFdBNVJXM0MxUlRSOEM3NEdHTlI4OThG/information");
+      setCheckoutURL(data.cartLinesAdd.cart.checkoutUrl);
+      // setCheckoutURL("https://sahjad-ext.myshopify.com/checkouts/cn/Z2NwLXVzLWNlbnRyYWwxOjAxSFdBNVJXM0MxUlRSOEM3NEdHTlI4OThG/information");
       setTotalQuantity(data.cartLinesAdd.cart.totalQuantity);
 
       if (data.cartLinesAdd.cart.checkoutUrl) {

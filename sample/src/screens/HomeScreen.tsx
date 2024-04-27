@@ -5,23 +5,30 @@ import Product from '../components/Product';
 import Carousel from '../components/Carousal'
 import Header from '../components/Header'
 import SearchModal from '../components/Modal/SearchModal'
+import ProductDetailsModal from '../components/Modal/ProductDetailsModal'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from '../utils';
 import { LETRO, NEW_PRODUCT, SEE_ALL, POPULAR, RANKING, FILTER } from '../constants/Constants'
 import { darkgrayColor, whiteColor, blackColor, grayColor, redColor } from '../constants/Color'
-import { EARBUDS_SOLO_IMAGE, BEATS_SOLO_IMAGE, GRID_IMAGE, RANKING_IMAGE } from '../assests/images'
+import { GRID_IMAGE, RANKING_IMAGE,BANNER_IMAGE ,BANNER_IMAGE_TWO, } from '../assests/images'
 import AntDesign from 'react-native-vector-icons/dist/AntDesign';
+import { spacings, style } from '../constants/Fonts';
+import { BaseStyle } from '../constants/Style';
+const { positionAbsolute, flex, alignJustifyCenter, flexDirectionRow, resizeModeContain, resizeModeCover, justifyContentSpaceBetween } = BaseStyle;
 const HomeScreen: React.FC = ({ navigation }) => {
   const [isDoorOpen, setIsDoorOpen] = useState(false);
   const [isPannedUp, setIsPannedUp] = useState(false);
-  const [isSearch, setIsSearch] = useState(false);
+  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [isProductDetailVisible, setIsProductDetailVisible] = useState(false);
+  const [products, setProducts] = useState({});
   const { queries } = useShopify();
   const pan = useRef(new Animated.Value(0)).current;
   const [fetchProducts, { data }] = queries.products;
   const leftDoorAnim = useRef(new Animated.Value(0)).current;
   const rightDoorAnim = useRef(new Animated.Value(0)).current;
+
   const carouselData = [
-    { id: 1, image: BEATS_SOLO_IMAGE },
-    { id: 2, image: EARBUDS_SOLO_IMAGE },
+    { id: 1, image: BANNER_IMAGE },
+    { id: 2, image: BANNER_IMAGE_TWO },
   ];
 
   useEffect(() => {
@@ -30,7 +37,7 @@ const HomeScreen: React.FC = ({ navigation }) => {
 
   const translateY = pan.interpolate({
     inputRange: [0, 1],
-    outputRange: [hp(35), 0],
+    outputRange: [hp(34), 0],
   });
   const animateSwipeUp = () => {
     setIsPannedUp(true)
@@ -113,62 +120,63 @@ const HomeScreen: React.FC = ({ navigation }) => {
     <View style={{ flex: 1, backgroundColor: darkgrayColor }}>
       {
         isDoorOpen === true ? (
-          <View style={styles.doorContainer} >
-            <Animated.View style={[styles.door, { transform: [{ rotateY: leftDoorRotation }] }]}>
+          <View style={[flexDirectionRow]} >
+            <Animated.View style={[styles.door, alignJustifyCenter, positionAbsolute, { transform: [{ rotateY: leftDoorRotation }] }]}>
               <Text style={[styles.text, { color: whiteColor }]}>{LETRO}</Text>
             </Animated.View>
-            <Animated.View style={[styles.door, { transform: [{ rotateY: rightDoorRotation }] }]}>
+            <Animated.View style={[styles.door, alignJustifyCenter, positionAbsolute, { transform: [{ rotateY: rightDoorRotation }] }]}>
               <Text style={[styles.text, { color: whiteColor }]}>{LETRO}</Text>
             </Animated.View>
           </View >
         ) :
-          <View style={styles.container}>
+          <View style={[styles.container, flex]}>
             <Header
-              leftIcon={"menu"}
+              // leftIcon={"menu"}
               onTextPress={openDoor}
-              onBucketPress={() => navigation.navigate("Cart")}
-              onSerchPress={() => setIsSearch(true)} />
-            <View style={styles.carousalBox}>
+              // onBucketPress={() => navigation.navigate("Cart")}
+              // onSerchPress={() => setIsSearchVisible(true)}
+              />
+            <View style={[styles.carousalBox, alignJustifyCenter]}>
               <Carousel
                 data={carouselData}
                 renderItem={item => (
-                  <View style={styles.carousalImageView}>
-                    <Image source={item.image} style={{ width: wp(100), height: hp(32) }} resizeMode="cover" />
+                  <View style={[styles.carousalImageView, alignJustifyCenter]}>
+                    <Image source={item.image} style={[{ width: wp(100), height: hp(33) }, resizeModeCover]} />
                   </View>
                 )}
               />
             </View>
+
             <Animated.View
-              style={[styles.desContainer, { transform: [{ translateY }] }]}
+              style={[styles.desContainer, positionAbsolute, { transform: [{ translateY }] }]}
               {...panResponder.panHandlers}>
               <ScrollView showsVerticalScrollIndicator={false}>
-                {/* {isPannedUp ?
-                  <View style={styles.desHeadingBox}>
-                    <TouchableOpacity style={{ alignItems: "center", justifyContent: "center" }}>
-                      <Image source={GRID_IMAGE} resizeMode="contain" />
+                {isPannedUp ?
+                  <View style={[styles.desHeadingBox, flexDirectionRow, justifyContentSpaceBetween]}>
+                    <TouchableOpacity style={[alignJustifyCenter]}>
+                      <Image source={GRID_IMAGE} style={[resizeModeContain]} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                      <Image source={RANKING_IMAGE} resizeMode="contain" />
+                    <TouchableOpacity style={[flexDirectionRow, alignJustifyCenter]}>
+                      <Image source={RANKING_IMAGE} style={[resizeModeContain]} />
                       <Text style={[{ fontSize: 20, color: grayColor }]}>{RANKING}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ flexDirection: "row" }}>
+                    <TouchableOpacity style={[flexDirectionRow]}>
                       <AntDesign name="filter" size={25} color={blackColor} />
                       <Text style={[{ fontSize: 20, color: grayColor }]}>{FILTER}</Text>
                     </TouchableOpacity>
                   </View>
-                  : */}
-                  <View style={styles.desHeadingBox}>
+                  :
+                  <View style={[styles.desHeadingBox, flexDirectionRow, justifyContentSpaceBetween]}>
                     <Text style={[styles.text, { color: blackColor }]}>{NEW_PRODUCT}</Text>
                     <Text
                       style={[
-
-                        { fontSize: 20, color: grayColor },
+                        { fontSize: style.fontSizeLarge.fontSize, color: grayColor },
                       ]}
                       onPress={animateSwipeUp}>
                       {SEE_ALL}
                     </Text>
                   </View>
-                  {/* } */}
+                }
                 {
                   data ?
                     <>
@@ -179,9 +187,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
                             <Product
                               product={item.node}
                               onPress={() => {
-                                navigation.navigate('ProductDetailsNew', {
-                                  product: item.node,
-                                });
+                                setIsProductDetailVisible(true),
+                                  setProducts(item.node)
+                                // navigation.navigate('ProductDetailsNew', {
+                                //   product: item.node,
+                                // });
                               }}
                             />
                           )}
@@ -191,12 +201,12 @@ const HomeScreen: React.FC = ({ navigation }) => {
                         />
                       </View>
 
-                      <View style={styles.desHeadingBox}>
+                      <View style={[styles.desHeadingBox, flexDirectionRow, justifyContentSpaceBetween]}>
                         <Text style={[styles.text, { color: blackColor }]}>{POPULAR}</Text>
                       </View>
                     </> :
-                    <View style={{ alignItems: "center", justifyContent: "center", height: hp(30) }}>
-                      <ActivityIndicator size="large" color="black" />
+                    <View style={[alignJustifyCenter, { height: hp(30) }]}>
+                      <ActivityIndicator size="large" color={blackColor} />
                     </View>
                 }
                 <View>
@@ -206,9 +216,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
                       <Product
                         product={item.node}
                         onPress={() => {
-                          navigation.navigate('ProductDetails', {
-                            product: item.node,
-                          });
+                          setIsProductDetailVisible(true),
+                            setProducts(item.node)
+                          // navigation.navigate('ProductDetailsNew', {
+                          //   product: item.node,
+                          // });
                         }}
                       />
                     )}
@@ -224,9 +236,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
                       <Product
                         product={item.node}
                         onPress={() => {
-                          navigation.navigate('ProductDetails', {
-                            product: item.node,
-                          });
+                          setIsProductDetailVisible(true),
+                            setProducts(item.node)
+                          // navigation.navigate('ProductDetailsNew', {
+                          //   product: item.node,
+                          // });
                         }}
                       />
                     )}
@@ -242,9 +256,11 @@ const HomeScreen: React.FC = ({ navigation }) => {
                       <Product
                         product={item.node}
                         onPress={() => {
-                          navigation.navigate('ProductDetails', {
-                            product: item.node,
-                          });
+                          setIsProductDetailVisible(true),
+                            setProducts(item.node)
+                          // navigation.navigate('ProductDetailsNew', {
+                          //   product: item.node,
+                          // });
                         }}
                       />
                     )}
@@ -255,9 +271,18 @@ const HomeScreen: React.FC = ({ navigation }) => {
                 </View>
               </ScrollView>
             </Animated.View>
-            {isSearch && <SearchModal
-              visible={isSearch}
-              onClose={() => setIsSearch(false)} />}
+            {isSearchVisible &&
+              <SearchModal
+                visible={isSearchVisible}
+                onClose={() => setIsSearchVisible(false)} />
+            }
+            {isProductDetailVisible &&
+              <ProductDetailsModal
+                visible={isProductDetailVisible}
+                onClose={() => setIsProductDetailVisible(false)}
+                products={products}
+              />
+            }
           </View>}
     </View>
   );
@@ -265,41 +290,24 @@ const HomeScreen: React.FC = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: darkgrayColor,
   },
   icon: {
     width: wp(8),
     height: hp(4),
-    resizeMode: 'contain',
   },
   text: {
-    fontSize: 25,
-    fontWeight: '500',
+    fontSize: style.fontSizeLarge1x.fontSize,
+    fontWeight: style.fontWeightThin1x.fontWeight,
     color: whiteColor,
   },
   carousalBox: {
     width: wp(100),
     height: hp(33),
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   carousalImageView: {
     width: wp(100),
     height: hp(28),
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  paginationContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  paginationDot: {
-    width: wp(2),
-    height: hp(.5),
-    borderRadius: 5,
-    marginHorizontal: 5,
   },
   flatList: {
     width: wp(95),
@@ -310,58 +318,24 @@ const styles = StyleSheet.create({
     backgroundColor: whiteColor,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    position: 'absolute',
+    paddingVertical: spacings.Large2x,
+    paddingHorizontal: spacings.xlarge,
     bottom: 0,
     left: 0,
     right: 0,
     top: hp(5),
   },
   desHeadingBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    marginVertical: 6,
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    height: hp(9),
-    backgroundColor: whiteColor,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  footerBtn: {
-    width: '20%',
-    alignItems: 'center',
-  },
-  roundFooterBtn: {
-    width: '20%',
-    height: hp(10),
-    alignItems: 'center',
-    position: 'relative',
-    bottom: 20,
-    backgroundColor: redColor,
-    borderRadius: 50,
-    justifyContent: 'center',
-  },
-  doorContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: spacings.Large2x,
+    marginVertical: spacings.normalx,
   },
   door: {
     width: wp(100),
     height: hp(100),
     backgroundColor: redColor,
-    marginHorizontal: 5,
+    marginHorizontal: spacings.small2x,
     borderRadius: 10,
-    position: 'absolute',
     zIndex: 1,
-    alignItems: "center",
-    justifyContent: "center"
   },
 });
 

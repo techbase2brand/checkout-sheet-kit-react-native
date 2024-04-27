@@ -1,13 +1,16 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { whiteColor, lightGreenColor } from '../constants/Color'
+import { whiteColor, lightGreenColor, blackColor } from '../constants/Color'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from '../utils';
+import { spacings, style } from '../constants/Fonts';
+import { BaseStyle } from '../constants/Style';
+const {alignJustifyCenter,borderRadius50,textAlign,borderRadius10,borderWidth1 } = BaseStyle;
 const Button = ({ onPress, title,loading }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
+    <TouchableOpacity onPress={onPress} style={[styles.button,alignJustifyCenter,borderRadius10,borderWidth1]}>
       {loading ?
         <ActivityIndicator size="small" color="white" /> :
-        <Text style={styles.buttonText}>{title}</Text>
+        <Text style={[styles.buttonText,textAlign]}>{title}</Text>
         }
     </TouchableOpacity>
   );
@@ -15,18 +18,16 @@ const Button = ({ onPress, title,loading }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: lightGreenColor,
-    borderRadius: 50,
+    // backgroundColor: lightGreenColor,
     width: wp(70),
     height: hp(7),
-    alignItems: "center",
-    justifyContent: "center"
+    borderColor:blackColor
+
   },
   buttonText: {
-    color: whiteColor,
-    textAlign: 'center',
-    fontWeight: 'bold',
-    fontSize: 16
+    color: blackColor,
+    fontWeight: style.fontWeightBold.fontWeight,
+    fontSize: style.fontSizeNormal2x.fontSize
   },
 });
 

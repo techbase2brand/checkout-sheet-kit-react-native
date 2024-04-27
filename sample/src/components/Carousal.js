@@ -1,41 +1,7 @@
-// import React from 'react';
-// import { View, FlatList, Dimensions, StyleSheet } from 'react-native';
-
-// const { width } = Dimensions.get('window');
-
-// const Carousal = ({ data, renderItem }) => {
-//   const renderItemComponent = ({ item }) => {
-//     return (
-//       <View style={styles.item}>
-//         {renderItem(item)}
-//       </View>
-//     );
-//   };
-
-//   return (
-//     <FlatList
-//       data={data}
-//       renderItem={renderItemComponent}
-//       horizontal
-//       pagingEnabled
-//       showsHorizontalScrollIndicator={false}
-//     />
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   item: {
-//     width,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//   },
-// });
-
-// export default Carousal;
-
 import React, { useState, useEffect } from 'react';
 import { View, FlatList, Dimensions, StyleSheet, Animated } from 'react-native';
-
+import { BaseStyle } from '../constants/Style';
+const {alignJustifyCenter,flexDirectionRow,positionAbsolute } = BaseStyle;
 const { width } = Dimensions.get('window');
 
 const Carousal = ({ data, renderItem }) => {
@@ -59,7 +25,7 @@ const Carousal = ({ data, renderItem }) => {
 
   const renderItemComponent = ({ item }) => {
     return (
-      <View style={styles.item}>
+      <View style={[styles.item,alignJustifyCenter]}>
         {renderItem(item)}
       </View>
     );
@@ -76,9 +42,9 @@ const Carousal = ({ data, renderItem }) => {
         keyExtractor={(item, index) => index.toString()}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: false })}
       />
-      <View style={styles.dotContainer}>
+     {/* {data.length > 1 && <View style={[styles.dotContainer,alignJustifyCenter,flexDirectionRow,positionAbsolute]}>
         {data.map((_, index) => renderDot(index))}
-      </View>
+      </View>} */}
     </View>
   );
 };
@@ -86,14 +52,8 @@ const Carousal = ({ data, renderItem }) => {
 const styles = StyleSheet.create({
   item: {
     width,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   dotContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
     bottom: -5,
     left: 0,
     right: 0,

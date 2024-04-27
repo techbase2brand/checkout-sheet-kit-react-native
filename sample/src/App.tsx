@@ -3,11 +3,12 @@ import { Link, NavigationContainer,getFocusedRouteNameFromRoute ,useRoute,useNav
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import Icon from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
+import AntDesign from 'react-native-vector-icons/dist/AntDesign';
+import Ionicons from 'react-native-vector-icons/dist/Ionicons';
 import CatalogScreen from './screens/CatalogScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import HomeScreen from './screens/HomeScreen';
-import ProductDetailsScreenNew from './screens/ProductDetailsScreenNew';
 import {
   ColorScheme,
   Configuration,
@@ -15,7 +16,7 @@ import {
   useShopifyCheckoutSheet,
 } from '@shopify/checkout-sheet-kit';
 import { ConfigProvider } from './context/Config';
-import { ThemeProvider, getNavigationTheme, useTheme } from './context/Theme';
+import { ThemeProvider, useTheme } from './context/Theme';
 import { Appearance, StatusBar, StyleSheet, Image, TouchableOpacity, View } from 'react-native';
 import { CartProvider, useCart } from './context/Cart';
 import CartScreen from './screens/CartScreen';
@@ -23,9 +24,10 @@ import ProductDetailsScreen from './screens/ProductDetailsScreen';
 import { ProductVariant, ShopifyProduct } from '../@types';
 import ErrorBoundary from './ErrorBoundary';
 import { CheckoutException } from '@shopify/checkout-sheet-kit';
-import { whiteColor, grayColor, redColor } from '../src/constants/Color'
+import { whiteColor, grayColor, redColor ,blackColor} from '../src/constants/Color'
 import { PROFILE_ICON, FOURDOTS_ICON } from '../src/assests/images'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp, } from '../src/utils';
+import SearchScreen from './screens/SearchScreen';
 const colorScheme = ColorScheme.web;
 const config: Configuration = {
   colorScheme,
@@ -61,13 +63,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export const cache = new InMemoryCache();
 
 const client = new ApolloClient({
-  uri: `https://sahjad-ext.myshopify.com/api/2023-10/graphql.json`,
+  uri: `https://2ef994-e1.myshopify.com/api/2023-10/graphql.json`,
   // uri: `https://${env.STOREFRONT_DOMAIN}/api/2023-10/graphql.json`,
   cache,
   headers: {
     'Content-Type': 'application/json',
     // 'X-Shopify-Storefront-Access-Token': env.STOREFRONT_ACCESS_TOKEN ?? '',
-    'X-Shopify-Storefront-Access-Token': "d81cbbf9ed047fe5f95afa1b2e6936dd" ?? '',
+    'X-Shopify-Storefront-Access-Token': "579b71826946d784e0a9ebcc5446d974" ?? '',
   },
 });
 
@@ -76,7 +78,7 @@ function AppWithTheme({ children }: PropsWithChildren) {
 }
 
 const createNavigationIcon =
-  (name: string) =>
+  (name: string,IconType:IconType) =>
     ({
       color,
       size,
@@ -85,7 +87,7 @@ const createNavigationIcon =
       size: number;
       focused?: boolean;
     }): ReactNode => {
-      return <Icon name={name} color={color} size={size} />;
+      return <IconType name={name} color={color} size={size} />;
     };
 
 function AppWithContext({ children }: PropsWithChildren) {
@@ -159,11 +161,6 @@ function CatalogStack() {
           headerBackTitle: 'Back',
         })}
       />
-       <Stack.Screen
-        name="ProductDetailsNew"
-        component={ProductDetailsScreenNew}
-        options={{ headerShown: false }}
-      />
       <Stack.Screen
         name="CartModal"
         component={CartScreen}
@@ -182,7 +179,7 @@ function CartIcon() {
 
   return (
     <Link to="/CartModal">
-      <Icon name="shopping-basket" size={24} color={theme.colors.secondary} />
+      <Entypo name="shopping-basket" size={24} color={theme.colors.secondary} />
     </Link>
   );
 }
@@ -196,11 +193,6 @@ const CustomTabBarButton = ({ children, onPress }) => (
 function AppWithNavigation({ route }: { route: any }) {
   const { totalQuantity } = useCart();
 
-  const shouldHideBottomTabNavigator = (route: any) => {
-    const routeName = getFocusedRouteNameFromRoute(route);
-    return routeName === 'ProductDetailsNew' ? true : false;
-  };
-
   return (
     <NavigationContainer >
       <Tab.Navigator
@@ -208,19 +200,16 @@ function AppWithNavigation({ route }: { route: any }) {
           style: styles.footerContainer,
           labelStyle: styles.tabLabel,
           tabStyle: styles.tabStyle,
-          activeTintColor: redColor,
+          activeTintColor: blackColor,
           inactiveTintColor: grayColor,
         }}
-        screenOptions={({ route }) => ({
-          tabBarVisible: !shouldHideBottomTabNavigator(route),
-        })}
       >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           headerShown: false,
-          tabBarIcon: createNavigationIcon('home'),
+          tabBarIcon: createNavigationIcon('home',Entypo),
           tabBarLabel: () => null,
         }}
       />
@@ -229,15 +218,16 @@ function AppWithNavigation({ route }: { route: any }) {
         component={CatalogStack}
         options={{
           headerShown: false,
-          tabBarIcon: createNavigationIcon('bell'),
+          tabBarIcon: createNavigationIcon('shoppingcart',AntDesign),
           tabBarLabel: () => null,
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={CartScreen}
+        name="Search"
+        component={SearchScreen}
         options={{
-          tabBarIcon: () => <Image source={FOURDOTS_ICON} style={styles.icon} resizeMode="contain" />,
+          // tabBarIcon: () => <Image source={FOURDOTS_ICON} style={styles.icon} resizeMode="contain" />,
+          tabBarIcon: createNavigationIcon('search',Ionicons),
           tabBarLabel: () => null,
           tabBarButton: (props) => <CustomTabBarButton {...props} />,
           tabBarBadge: totalQuantity > 0 ? totalQuantity : undefined,
@@ -247,7 +237,7 @@ function AppWithNavigation({ route }: { route: any }) {
         name="Cart"
         component={CartScreen}
         options={{
-          tabBarIcon: createNavigationIcon('heart'),
+          tabBarIcon: createNavigationIcon('heart',Entypo),
           tabBarLabel: () => null,
           tabBarBadge: totalQuantity > 0 ? totalQuantity : undefined,
         }}
